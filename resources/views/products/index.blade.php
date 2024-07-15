@@ -35,6 +35,8 @@
                         <td>{{ $product['price'] }}</td>
                         <td>{{ $product['stock'] }}</td>
                         <td>
+                            <!-- detail button -->
+                            <a href="{{ route('products.show', $product['id']) }}" class="btn btn-primary">Detail</a>
                             <!-- Button to link edit products -->
                             <a href="{{ route('products.edit', $product['id']) }}" class="btn btn-warning">Edit</a>
                             <!-- Button to link delete products -->
