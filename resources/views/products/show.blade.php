@@ -11,17 +11,21 @@
 </head>
 <body>
 <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <img src="https://cdn-icons-png.freepik.com/512/4129/4129528.png" alt="{{ $product->name }}" class="img-fluid">
+    <div class="card">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="https://cdn-icons-png.freepik.com/512/4129/4129528.png" alt="{{ $product->name }}" class="card-img">
             </div>
-            <div class="col-md-6">
-                <h2>{{ $product->name }}</h2>
-                <p>Price: ${{ $product->price }}</p>
-                <p>Stock : {{ $product->stock }}</p>
-                <button class="btn btn-primary">Add to Cart</button>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ $product->name }}</h5>
+                    <p class="card-text">Price: ${{ $product->price }}</p>
+                    <p class="card-text">Stock: {{ $product->stock }}</p>
+                    <button class="btn btn-primary">Add to Cart</button>
+                </div>
             </div>
         </div>
+    </div>
 </div>
 
 </body>

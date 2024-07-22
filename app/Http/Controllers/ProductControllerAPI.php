@@ -13,6 +13,7 @@ class ProductControllerAPI extends Controller
      */
     public function index()
     {
+        // $sql = 'select * from products';
         $product = Product::all();
         return response()->json([
             'status' => 'success',
