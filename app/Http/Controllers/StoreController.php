@@ -13,6 +13,11 @@ class StoreController extends Controller
     public function index()
     {
         //
+        $store = Store::all();
+        return response()->json([
+            'status' => 'success',
+            'store' => $store
+        ]);
     }
 
     /**
@@ -21,6 +26,25 @@ class StoreController extends Controller
     public function store(Request $request)
     {
         //
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'phone_number' => 'required',
+            'address' => 'required'
+        ]);
+        $store = Store::create($validatedData);
+        // check if the store is created successfully or not
+        if ($store) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Store created',
+                'store' => $store
+            ]);
+        }else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Store failed to create'
+            ], 400);
+        }
     }
 
     /**
@@ -29,6 +53,18 @@ class StoreController extends Controller
     public function show(string $id)
     {
         //
+        $store = Store::find($id);
+        if (!$store) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Store not found'
+            ], 404);
+        }else {
+            return response()->json([
+                'status' => 'success',
+                'store' => $store
+            ]);
+        }
     }
 
     /**
@@ -37,6 +73,26 @@ class StoreController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'phone_number' => 'required',
+            'address' => 'required'
+        ]);
+        $store = Store::find($id);
+        if(!$store) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Store not found'
+            ], 404);
+        }else {
+            $store->update($validatedData);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Store updated',
+                'store' => $store
+            ]);
+        }
+       
     }
 
     /**
@@ -45,5 +101,20 @@ class StoreController extends Controller
     public function destroy(string $id)
     {
         //
+        $store = Store::find($id);
+        if(!$store) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Store not found'
+            ], 404);
+        }else {
+            $store->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Store deleted'
+            ]);
+        }
+        
     }
+
 }

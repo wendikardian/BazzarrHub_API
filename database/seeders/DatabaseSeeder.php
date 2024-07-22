@@ -4,6 +4,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+// import product tableseeder and store seeder
+use Database\Seeders\ProductsTableSeeder;
+use Database\Seeders\StoreSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +22,10 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        // run seeder for product and store
+        $this->call([
+            ProductsTableSeeder::class,
+            StoreSeeder::class,
+        ]);
     }
 }
