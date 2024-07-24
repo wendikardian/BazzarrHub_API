@@ -28,10 +28,15 @@ class ProductControllerAPI extends Controller
     {
         //
         $validatedData = $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'stock' => 'required'
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer'
+        ], [
+            'name.required' => 'The name field is required.',
+            'price.required' => 'The price field is required.',
+            'stock.required' => 'The stock field is required.'
         ]);
+
         $product = Product::create($validatedData);
         return response()->json([
             'status' => 'success',
@@ -66,9 +71,13 @@ class ProductControllerAPI extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'stock' => 'required'
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer'
+        ], [
+            'name.required' => 'The name field is required.',
+            'price.required' => 'The price field is required.',
+            'stock.required' => 'The stock field is required.'
         ]);
         $product = Product::find($id);
         if(!$product) {
