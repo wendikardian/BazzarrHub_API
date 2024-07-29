@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+// create Swegger annotation
+use OpenApi\Attributes as OA;
+
 class UserController extends Controller
 {
     public function login(Request $request)
@@ -23,6 +26,7 @@ class UserController extends Controller
                 'message' => $validator->errors()
             ], 422);
         }
+        
         $user = User::where('email', $request->email)->first();
         if(!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -41,7 +45,7 @@ class UserController extends Controller
     public function register(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'name' => 'required',
+            'name' => 'required|string|max:50',
             'password' => 'required'
         ]);
 
@@ -51,6 +55,7 @@ class UserController extends Controller
                 'message' => $validator->errors()
             ], 422);
         }
+        
         $user = User::create([
             'email' => $request->email,
             'name' => $request->name,
