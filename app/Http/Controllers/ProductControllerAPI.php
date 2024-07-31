@@ -52,9 +52,20 @@ class ProductControllerAPI extends Controller
      *      )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $query = $request->input('keyword');
+        if($query){
+            $products = Product::where('name', 'like', "%$query%")
+            ->orWhere('price', 'like', "%$query%")
+            ->orWhere('stock', 'like', "%$query%")
+            ->orderBy('price', 'desc')
+            ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
+        }else{
+            $products = Product::orderBy('price', 'desc')
+            ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
+        }
+
         return response()->json([
             'status' => 'success',
             'products' => $products
