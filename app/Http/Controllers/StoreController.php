@@ -13,7 +13,9 @@ class StoreController extends Controller
     public function index()
     {
         //
-        $store = Store::all();
+        // $store = Store::all(); 
+        // $store = Store::paginate(5);
+        $store = Store::paginate($perPage = 5, $columns = ['*'], $pageName = 'page', );
         return response()->json([
             'status' => 'success',
             'store' => $store

@@ -5,6 +5,10 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+// import store factory
+use Database\Factories\StoreFactory;
+use App\Models\Store;
 
 class StoreSeeder extends Seeder
 {
@@ -14,21 +18,22 @@ class StoreSeeder extends Seeder
     public function run(): void
     {
         //
-        $now = now();
-        DB::table('store')->insert([
-            'name' => 'store 1',
-            'phone_number' => '9123123123',
-            'address' => 'address 1',
-            'created_at' => $now,
-            'updated_at' => $now,
-       ]);
+    //     $now = now();
+    //     DB::table('store')->insert([
+    //         'name' => 'store 1',
+    //         'phone_number' => '9123123123',
+    //         'address' => 'address 1',
+    //         'created_at' => $now,
+    //         'updated_at' => $now,
+    //    ]);
 
-         DB::table('store')->insert([
-                'name' => 'store 2',
-                'phone_number' => '9123123124',
-                'address' => 'address 2',
-                'created_at' => $now,
-                'updated_at' => $now,
-         ]);
+    //      DB::table('store')->insert([
+    //             'name' => 'store 2',
+    //             'phone_number' => '9123123124',
+    //             'address' => 'address 2',
+    //             'created_at' => $now,
+    //             'updated_at' => $now,
+    //      ]);
+        Store::factory(100)->create();
     }
 }
