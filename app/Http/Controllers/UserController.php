@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 // create Swegger annotation
 use OpenApi\Attributes as OA;
 
+
 class UserController extends Controller
 {
     public function login(Request $request)

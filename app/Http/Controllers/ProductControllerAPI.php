@@ -14,11 +14,17 @@ use OpenApi\Attributes as OA;
  *      @OA\Contact(
  *          email="wendikardian@gmail.com"
  *      )
- *     ),
+ * )
  * 
  * @OA\Server(
  *     url=L5_SWAGGER_CONST_HOST,
- *    description="ProductsAPI"
+ *     description="ProductsAPI"
+ * )
+ * 
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     scheme="bearer",
+ *     securityScheme="bearerAuth"
  * )
  * 
  * @OA\Schema(
@@ -32,7 +38,6 @@ use OpenApi\Attributes as OA;
  */
 
 
-
 class ProductControllerAPI extends Controller
 {
     /**
@@ -41,7 +46,7 @@ class ProductControllerAPI extends Controller
      * @OA\Get(
      *     path="/api/products",
      *     tags={"Product"},
-    *     security={{"bearerAuth":{}}}, 
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *          response=200,
      *          description="success",
@@ -74,49 +79,51 @@ class ProductControllerAPI extends Controller
   
 
    
+/**
+ * Store a newly created resource in storage.
+ */
+// add some documentation using Swegger
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    // add some documentation using Swegger
-
-    /**
-     * @OA\Post(
-     *     path="/api/products",
-     *     tags={"Product"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(
-     *              required={"name", "price", "stock"},
-     *              @OA\Property(property="name", type="string", example="Product 1"),
-     *              @OA\Property(property="price", type="number", example=10000),
-     *              @OA\Property(property="stock", type="integer", example=10),
-     *          )
-     *      ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="success",
-     *          @OA\JsonContent(
-     *              @OA\Property(property="status", type="string", example="success"),
-     *              @OA\Property(property="message", type="string", example="Product created"),
-     *              @OA\Property(property="product", ref="#/components/schemas/Product"),
-     *          )
-     *      )
-     * )
-     */
+/**
+ * @OA\Post(
+ *     path="/api/products",
+ *     tags={"Product"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *          required=true,
+ *          @OA\JsonContent(
+ *              required={"name", "price", "stock"},
+ *              @OA\Property(property="name", type="string", example="Product 1"),
+ *              @OA\Property(property="price", type="number", example=10000),
+ *              @OA\Property(property="stock", type="integer", example=10),
+ *          )
+ *      ),
+ *     @OA\Response(
+ *          response=200,
+ *          description="success",
+ *          @OA\JsonContent(
+ *              @OA\Property(property="status", type="string", example="success"),
+ *              @OA\Property(property="message", type="string", example="Product created"),
+ *              @OA\Property(property="product", ref="#/components/schemas/Product"),
+ *          )
+ *      )
+ * )
+ */
 
     public function store(Request $request)
     {
         //
         $validatedData = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|max:50',
             'price' => 'required|numeric',
             'stock' => 'required|integer'
         ], [
             'name.required' => 'The name field is required.',
             'price.required' => 'The price field is required.',
-            'stock.required' => 'The stock field is required.'
+            'stock.required' => 'The stock field is required.',
+            'name.string' => 'The name field must be a string.',
+            'price.numeric' => 'The price field must be a number.',
+            'stock.integer' => 'The stock field must be an integer.'
         ]);
 
         $product = Product::create($validatedData);
