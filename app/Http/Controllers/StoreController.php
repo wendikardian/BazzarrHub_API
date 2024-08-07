@@ -14,13 +14,14 @@ class StoreController extends Controller
      */
     public function index(Request $request)
     {
-        $query = $request->query('query');
+        $query = $request->query('keyword');
         //
         // $store = Store::all(); 
         // $store = Store::paginate(5);
         $store = Store::where('name', 'like', "%$query%")
         ->orWhere('phone_number', 'like', "%$query%")
         ->orWhere('address', 'like', "%$query%")
+        ->orderBy('id', 'asc')
         ->paginate($perPage = 5, $columns = ['*'], $pageName = 'page', );
         return response()->json([
             'status' => 'success',
