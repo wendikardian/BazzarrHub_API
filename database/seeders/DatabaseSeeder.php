@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 // import product tableseeder and store seeder
 use Database\Seeders\ProductsTableSeeder;
 use Database\Seeders\StoreSeeder;
+use Database\Seeders\BrandSeeder;
+use Database\Seeders\CategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,6 +28,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductsTableSeeder::class,
             StoreSeeder::class,
+            BrandSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

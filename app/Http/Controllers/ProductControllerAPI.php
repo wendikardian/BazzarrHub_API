@@ -37,9 +37,11 @@ use OpenApi\Attributes as OA;
  *     @OA\Property(property="name", type="string", example="Product 1"),
  *     @OA\Property(property="price", type="number", example=10000),
  *     @OA\Property(property="stock", type="integer", example=10),
+ *      @OA\Property(property="category_id", type="integer", example=1),
+ *    @OA\Property(property="brand_id", type="integer", example=1),
  * )
  * 
-* @OA\Schema(
+ * @OA\Schema(
  *     schema="Category",
  *     required={"id", "name", "description"},
  *     @OA\Property(property="id", type="integer", example=1),
@@ -90,55 +92,85 @@ class ProductControllerAPI extends Controller
     public function index(Request $request)
     {
         $query = $request->input('keyword');
+
         if ($query) {
-            $products = Product::where('name', 'like', "%$query%")
-                ->orWhere('price', 'like', "%$query%")
-                ->orWhere('stock', 'like', "%$query%")
-                ->orderBy('price', 'desc')
-                ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
+            $products = Product::with(['category', 'brand'])
+            ->where('name', 'like', "%$query%")
+            ->orWhere('price', 'like', "%$query%")
+            ->orWhere('stock', 'like', "%$query%")
+            ->orderBy('price', 'desc');
         } else {
-            $products = Product::orderBy('price', 'desc')
-                ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
+            $products = Product::with(['category', 'brand'])
+            ->orderBy('price', 'desc');
         }
+
+        $category = $request->input('category');
+        if ($category) {
+            $products->whereHas('category', function ($query) use ($category) {
+            $query->where('name', 'like', "%$category%");
+            });
+        }
+
+        $brand = $request->input('brand');
+        if ($brand) {
+            $products->whereHas('brand', function ($query) use ($brand) {
+            $query->where('name', 'like', "%$brand%");
+            });
+        }
+
+        $products = $products->paginate(10);
+
+        $products->getCollection()->transform(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'category' => $product->category ? $product->category->name : null,
+                'brand' => $product->brand ? $product->brand->name : null,
+            ];
+        });
 
         return response()->json([
             'status' => 'success',
             'products' => $products
         ]);
     }
-  
 
-   
-/**
- * Store a newly created resource in storage.
- */
-// add some documentation using Swegger
 
-/**
- * @OA\Post(
- *     path="/api/products",
- *     tags={"Product"},
- *     security={{"bearerAuth":{}}},
- *     @OA\RequestBody(
- *          required=true,
- *          @OA\JsonContent(
- *              required={"name", "price", "stock"},
- *              @OA\Property(property="name", type="string", example="Product 1"),
- *              @OA\Property(property="price", type="number", example=10000),
- *              @OA\Property(property="stock", type="integer", example=10),
- *          )
- *      ),
- *     @OA\Response(
- *          response=200,
- *          description="success",
- *          @OA\JsonContent(
- *              @OA\Property(property="status", type="string", example="success"),
- *              @OA\Property(property="message", type="string", example="Product created"),
- *              @OA\Property(property="product", ref="#/components/schemas/Product"),
- *          )
- *      )
- * )
- */
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    // add some documentation using Swegger
+
+    /**
+     * @OA\Post(
+     *     path="/api/products",
+     *     tags={"Product"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"name", "price", "stock"},
+     *              @OA\Property(property="name", type="string", example="Product 1"),
+     *              @OA\Property(property="price", type="number", example=10000),
+     *              @OA\Property(property="stock", type="integer", example=10),
+     *              @OA\Property(property="category_id", type="integer", example=1),
+     *            @OA\Property(property="brand_id", type="integer", example=1),
+     *          )
+     *      ),
+     *     @OA\Response(
+     *          response=200,
+     *          description="success",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="success"),
+     *              @OA\Property(property="message", type="string", example="Product created"),
+     *              @OA\Property(property="product", ref="#/components/schemas/Product"),
+     *          )
+     *      )
+     * )
+     */
 
     public function store(Request $request)
     {
@@ -146,14 +178,20 @@ class ProductControllerAPI extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:50',
             'price' => 'required|numeric',
-            'stock' => 'required|integer'
+            'stock' => 'required|integer',
+            'category_id' => 'required|integer',
+            'brand_id' => 'required|integer'
         ], [
             'name.required' => 'The name field is required.',
             'price.required' => 'The price field is required.',
             'stock.required' => 'The stock field is required.',
             'name.string' => 'The name field must be a string.',
             'price.numeric' => 'The price field must be a number.',
-            'stock.integer' => 'The stock field must be an integer.'
+            'stock.integer' => 'The stock field must be an integer.',
+            'category_id.required' => 'The category_id field is required.',
+            'brand_id.required' => 'The brand_id field is required.',
+            'category_id.integer' => 'The category_id field must be an integer.',
+            'brand_id.integer' => 'The brand_id field must be an integer.'
         ]);
 
         $product = Product::create($validatedData);
@@ -242,6 +280,8 @@ class ProductControllerAPI extends Controller
      * @OA\Property(property="name", type="string", example="Product 1"),
      * @OA\Property(property="price", type="number", example=10000),
      * @OA\Property(property="stock", type="integer", example=10),
+     * @OA\Property(property="category_id", type="integer", example=1),
+     * @OA\Property(property="brand_id", type="integer", example=1),
      * )
      * ),
      * @OA\Response(
@@ -269,11 +309,20 @@ class ProductControllerAPI extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'price' => 'required|numeric',
-            'stock' => 'required|integer'
+            'stock' => 'required|integer',
+            'category_id' => 'required|integer',
+            'brand_id' => 'required|integer'
         ], [
             'name.required' => 'The name field is required.',
             'price.required' => 'The price field is required.',
-            'stock.required' => 'The stock field is required.'
+            'stock.required' => 'The stock field is required.',
+            'name.string' => 'The name field must be a string.',
+            'price.numeric' => 'The price field must be a number.',
+            'stock.integer' => 'The stock field must be an integer.',
+            'category_id.required' => 'The category_id field is required.',
+            'brand_id.required' => 'The brand_id field is required.',
+            'category_id.integer' => 'The category_id field must be an integer.',
+            'brand_id.integer' => 'The brand_id field must be an integer.'
         ]);
         $product = Product::find($id);
         if (!$product) {

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->integer('price');
             $table->integer('stock');
+            $table->integer('category_id');
+            $table->integer('brand_id');
             $table->timestamps();
         });
     }

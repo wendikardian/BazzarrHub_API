@@ -716,6 +716,14 @@
                                     "stock": {
                                         "type": "integer",
                                         "example": 10
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "brand_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -857,6 +865,14 @@
                                     "stock": {
                                         "type": "integer",
                                         "example": 10
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "brand_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1163,6 +1179,14 @@
                     "stock": {
                         "type": "integer",
                         "example": 10
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "brand_id": {
+                        "type": "integer",
+                        "example": 1
                     }
                 },
                 "type": "object"
@@ -1251,6 +1275,12 @@
         },
         "securitySchemes": {
             "bearerAuth": {
+                "type": "apiKey",
+                "description": "Enter your bearer token in the format **Bearer &lt;token>**",
+                "name": "Authorization",
+                "in": "header"
+            },
+            "bearerAuth_category": {
                 "type": "apiKey",
                 "description": "Enter your bearer token in the format **Bearer &lt;token>**",
                 "name": "Authorization",
