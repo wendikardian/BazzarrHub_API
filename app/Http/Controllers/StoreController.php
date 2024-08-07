@@ -5,17 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Store;
 
+
+
 class StoreController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = $request->query('query');
         //
         // $store = Store::all(); 
         // $store = Store::paginate(5);
-        $store = Store::paginate($perPage = 5, $columns = ['*'], $pageName = 'page', );
+        $store = Store::where('name', 'like', "%$query%")
+        ->orWhere('phone_number', 'like', "%$query%")
+        ->orWhere('address', 'like', "%$query%")
+        ->paginate($perPage = 5, $columns = ['*'], $pageName = 'page', );
         return response()->json([
             'status' => 'success',
             'store' => $store

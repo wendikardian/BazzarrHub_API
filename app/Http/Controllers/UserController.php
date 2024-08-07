@@ -14,6 +14,34 @@ use OpenApi\Attributes as OA;
 
 class UserController extends Controller
 {
+
+    // add anotation for login method 
+    /**
+     * @OA\Post(
+     *     path="/api/login",
+     *     tags={"User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="email", type="string", example="wendikardian@gmail.com"
+     *                ),
+     *                @OA\Property(property="password", type="string", example="password")
+     *            )
+     *       )
+     *    ),
+     *   @OA\Response(
+     *      response=200,
+     *     description="success",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="data", type="object",
+     *         @OA\Property(property="token", type="string", example="token")
+     *       )
+     *     )
+     *   )
+     * )
+     */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -27,9 +55,9 @@ class UserController extends Controller
                 'message' => $validator->errors()
             ], 422);
         }
-        
+
         $user = User::where('email', $request->email)->first();
-        if(!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid email or password'
@@ -40,10 +68,42 @@ class UserController extends Controller
             "data" => [
                 "token" => $token
             ]
-            ]);
+        ]);
     }
 
-    public function register(Request $request){
+    // create method for register 
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     tags={"User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="email", type="string", example="wendikardian@gmail.com"),
+     *                 @OA\Property(property="name", type="string", example="Wendi Kardian"),
+     *                 @OA\Property(property="password", type="string", example="password")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="success",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="User created"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="email", type="string", example="wendikardian@gmail.com"),
+     *                 @OA\Property(property="name", type="string", example="Wendi Kardian"),
+     *                 @OA\Property(property="password", type="string", example="password")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'name' => 'required|string|max:50',
@@ -56,7 +116,7 @@ class UserController extends Controller
                 'message' => $validator->errors()
             ], 422);
         }
-        
+
         $user = User::create([
             'email' => $request->email,
             'name' => $request->name,
@@ -68,7 +128,26 @@ class UserController extends Controller
             'data' => $user
         ], 201);
     }
-    public function logout(Request $request){
+
+    // create method for logout
+    /**
+     * @OA\Post(
+     *     path="/api/logout",
+     *     tags={"User"},
+     *    security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="success",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Token deleted")
+     *         )
+     *     )
+     * )
+     */
+
+    public function logout(Request $request)
+    {
         $request->user()->tokens()->delete();
 
         return response()->json([

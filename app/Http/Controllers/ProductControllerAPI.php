@@ -10,22 +10,25 @@ use OpenApi\Attributes as OA;
  * @OA\Info(
  *      version="1.0.0",
  *      title="Dokumentasi API",
- *      description="Lorem Ipsum",
+ *      description="Gunakan API ini untuk mengelola data produk",
  *      @OA\Contact(
  *          email="wendikardian@gmail.com"
  *      )
  * )
  * 
+ * @OA\SecurityScheme(
+ *    type="http",
+ *    scheme="bearer",
+ *    securityScheme="bearerAuth"
+ * )
+ * 
+ * 
+ *
  * @OA\Server(
  *     url=L5_SWAGGER_CONST_HOST,
  *     description="ProductsAPI"
  * )
  * 
- * @OA\SecurityScheme(
- *     type="http",
- *     scheme="bearer",
- *     securityScheme="bearerAuth"
- * )
  * 
  * @OA\Schema(
  *     schema="Product",
@@ -35,7 +38,34 @@ use OpenApi\Attributes as OA;
  *     @OA\Property(property="price", type="number", example=10000),
  *     @OA\Property(property="stock", type="integer", example=10),
  * )
+ * 
+* @OA\Schema(
+ *     schema="Category",
+ *     required={"id", "name", "description"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Category 1"),
+ *     @OA\Property(property="description", type="string", example="Category description"),
+ * )
+ * @OA\Schema(
+ *    schema="Brand",
+ *   required={"id", "name", "description", "logo", "website", "email"},
+ * @OA\Property(property="id", type="integer", example=1),
+ * @OA\Property(property="name", type="string", example="Brand 1"),
+ * @OA\Property(property="description", type="string", example="Brand description"),
+ * @OA\Property(property="logo", type="string", example="logo.jpg"),
+ * @OA\Property(property="website", type="string", example="https://www.brand1.com"),
+ * @OA\Property(property="email", type="string", example="email@gmail.com"),
+ * )
+ * 
+ * @OA\Schema(
+ *     schema="User",
+ *     required={"name", "email", "password"},
+ *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="email", type="string", example="john@example.com"),
+ *     @OA\Property(property="password", type="string", example="password123"),
+ * )
  */
+
 
 
 class ProductControllerAPI extends Controller
@@ -60,15 +90,15 @@ class ProductControllerAPI extends Controller
     public function index(Request $request)
     {
         $query = $request->input('keyword');
-        if($query){
+        if ($query) {
             $products = Product::where('name', 'like', "%$query%")
-            ->orWhere('price', 'like', "%$query%")
-            ->orWhere('stock', 'like', "%$query%")
-            ->orderBy('price', 'desc')
-            ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
-        }else{
+                ->orWhere('price', 'like', "%$query%")
+                ->orWhere('stock', 'like', "%$query%")
+                ->orderBy('price', 'desc')
+                ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
+        } else {
             $products = Product::orderBy('price', 'desc')
-            ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
+                ->paginate($perPage = 10, $columns = ['*'], $pageName = 'page');
         }
 
         return response()->json([

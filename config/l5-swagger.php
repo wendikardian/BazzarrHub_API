@@ -152,14 +152,23 @@ return [
         /*
          * API security definitions. Will be generated into documentation file.
         */
-       'securityDefinitions' => [
-                'bearerAuth' => [
-                    'type' => 'apiKey',
-                    'description' => 'Enter your bearer token in the format **Bearer &lt;token>**',
-                    'name' => 'Authorization',
-                    'in' => 'header',
-                ],
+    'securityDefinitions' => [
+        'securitySchemes' => [
+            'bearerAuth' => [
+                'type' => 'apiKey',
+                'description' => 'Enter your bearer token in the format **Bearer &lt;token>**',
+                'name' => 'Authorization',
+                'in' => 'header',
             ],
+            'bearerAuth_category' => [
+                'type' => 'apiKey',
+                'description' => 'Enter your bearer token in the format **Bearer &lt;token>**',
+                'name' => 'Authorization',
+                'in' => 'header',
+            ],
+         
+        ],
+    ],
         /*
          * Set this to `true` in development mode so that docs would be regenerated on each request
          * Set this to `false` to disable swagger generation on production
@@ -239,7 +248,7 @@ return [
          */
         'constants' => [
             'L5_SWAGGER_CONST_HOST' =>
-            env('L5_SWAGGER_CONST_HOST', 'http://localhost:8000/api/v1'),
+            env('L5_SWAGGER_CONST_HOST', 'http://localhost:8000/'),
         ],
     ],
 ];
